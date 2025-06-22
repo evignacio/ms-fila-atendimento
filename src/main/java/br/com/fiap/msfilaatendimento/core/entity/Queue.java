@@ -3,30 +3,32 @@ package br.com.fiap.msfilaatendimento.core.entity;
 import java.util.ArrayDeque;
 import java.util.UUID;
 
-public class Queue {
+public class Queue<T> {
     private String id;
     private String title;
     private String description;
-    private String ubsId;
     private EmergencyCategory emergencyCategory;
-    private java.util.Queue<Patient> patients;
+    private java.util.Queue<T> elementsQueue;
 
-    public Queue(String id, String title, String description, String ubsId, EmergencyCategory emergencyCategory, java.util.Queue<Patient> patients) {
+    public Queue(String id, String title, String description, EmergencyCategory emergencyCategory, java.util.Queue<T> elementsQueue) {
         setId(id);
         setTitle(title);
         setDescription(description);
-        setUbsId(ubsId);
         setEmergencyCategory(emergencyCategory);
-        setPatients(patients);
+        setElementsQueue(elementsQueue);
     }
 
-    public Queue(String title, String description, String ubsId, EmergencyCategory emergencyCategory) {
+    public Queue(String title, String description) {
         setId(UUID.randomUUID().toString());
         setTitle(title);
         setDescription(description);
-        setUbsId(ubsId);
         setEmergencyCategory(emergencyCategory);
-        setPatients(new ArrayDeque<>());
+        setElementsQueue(new ArrayDeque<>());
+    }
+
+    public Queue(String title, String description, EmergencyCategory emergencyCategory) {
+        this(title, description);
+        setEmergencyCategory(emergencyCategory);
     }
 
     public String getId() {
@@ -62,36 +64,22 @@ public class Queue {
         this.description = description;
     }
 
-    public String getUbsId() {
-        return ubsId;
-    }
-
-    private void setUbsId(String ubsId) {
-        if (ubsId == null || ubsId.isEmpty()) {
-            throw new IllegalArgumentException("UBS ID cannot be null or empty");
-        }
-        this.ubsId = ubsId;
-    }
-
     public EmergencyCategory getEmergencyCategory() {
         return emergencyCategory;
     }
 
     private void setEmergencyCategory(EmergencyCategory emergencyCategory) {
-        if (emergencyCategory == null) {
-            throw new IllegalArgumentException("Emergency category cannot be null");
-        }
         this.emergencyCategory = emergencyCategory;
     }
 
-    public java.util.Queue<Patient> getPatients() {
-        return patients;
+    public java.util.Queue<T> getElementsQueue() {
+        return elementsQueue;
     }
 
-    private void setPatients(java.util.Queue<Patient> patients) {
+    private void setElementsQueue(java.util.Queue<T> patients) {
         if (patients == null) {
-            throw new IllegalArgumentException("Patients queue cannot be null");
+            throw new IllegalArgumentException("Elements queue cannot be null");
         }
-        this.patients = patients;
+        this.elementsQueue = patients;
     }
 }
