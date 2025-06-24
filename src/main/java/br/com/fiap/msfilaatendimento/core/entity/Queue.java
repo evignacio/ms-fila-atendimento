@@ -1,6 +1,7 @@
 package br.com.fiap.msfilaatendimento.core.entity;
 
 import java.util.ArrayDeque;
+import java.util.Optional;
 import java.util.UUID;
 
 public class Queue<T> {
