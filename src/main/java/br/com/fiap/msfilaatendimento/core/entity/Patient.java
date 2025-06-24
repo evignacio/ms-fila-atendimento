@@ -5,15 +5,15 @@ import java.util.UUID;
 public class Patient {
     private String id;
     private String name;
-    private int queueNumber;
+    private String queueNumber;
 
-    public Patient(String id, String name, int queueNumber) {
+    public Patient(String id, String name, String queueNumber) {
         setId(id);
         setName(name);
         setQueueNumber(queueNumber);
     }
 
-    public Patient(String name, int queueNumber) {
+    public Patient(String name, String queueNumber) {
         setId(UUID.randomUUID().toString());
         setName(name);
         setQueueNumber(queueNumber);
@@ -41,13 +41,13 @@ public class Patient {
         this.name = name;
     }
 
-    public int getQueueNumber() {
+    public String getQueueNumber() {
         return queueNumber;
     }
 
-    private void setQueueNumber(int queueNumber) {
-        if (queueNumber < 0) {
-            throw new IllegalArgumentException("Queue number cannot be negative");
+    private void setQueueNumber(String queueNumber) {
+        if (queueNumber == null || queueNumber.isEmpty()) {
+            throw new IllegalArgumentException("Queue number cannot be null or empty");
         }
         this.queueNumber = queueNumber;
     }

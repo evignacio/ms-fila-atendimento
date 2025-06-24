@@ -4,13 +4,23 @@ import java.util.Set;
 
 public class UbsQueueManager {
     private String ubsId;
-    private String title;
-    private Queue<Integer> triageQueue;
+    private String ubsName;
+    private String lastNumber;
+    private Queue<String> triageQueue;
     private Set<Queue<Patient>> serviceQueues;
 
-    public UbsQueueManager(String ubsId, String title, Queue<Integer> triageQueue, Set<Queue<Patient>> serviceQueues) {
+    public UbsQueueManager(String ubsId, String ubsName, String lastNumber, Queue<String> triageQueue, Set<Queue<Patient>> serviceQueues) {
         setUbsId(ubsId);
-        setTitle(title);
+        setUbsName(ubsName);
+        setLastNumber(lastNumber);
+        setTriageQueue(triageQueue);
+        setServiceQueues(serviceQueues);
+    }
+
+    public UbsQueueManager(String ubsId, String ubsName, Queue<String> triageQueue, Set<Queue<Patient>> serviceQueues) {
+        setUbsId(ubsId);
+        setUbsName(ubsName);
+        setLastNumber(createQueueNumber('A', 0, 0));
         setTriageQueue(triageQueue);
         setServiceQueues(serviceQueues);
     }
@@ -26,22 +36,33 @@ public class UbsQueueManager {
         this.ubsId = ubsId;
     }
 
-    public String getTitle() {
-        return title;
+    public String getUbsName() {
+        return ubsName;
     }
 
-    private void setTitle(String title) {
-        if (title == null || title.isEmpty()) {
+    private void setUbsName(String ubsName) {
+        if (ubsName == null || ubsName.isEmpty()) {
             throw new IllegalArgumentException("Title cannot be null or empty");
         }
-        this.title = title;
+        this.ubsName = ubsName;
     }
 
-    public Queue<Integer> getTriageQueue() {
+    public String getLastNumber() {
+        return lastNumber;
+    }
+
+    private void setLastNumber(String lastNumber) {
+        if (lastNumber == null || lastNumber.isEmpty()) {
+            throw new IllegalArgumentException("Last number cannot be null or empty");
+        }
+        this.lastNumber = lastNumber;
+    }
+
+    public Queue<String> getTriageQueue() {
         return triageQueue;
     }
 
-    private void setTriageQueue(Queue<Integer> triageQueue) {
+    private void setTriageQueue(Queue<String> triageQueue) {
         if (triageQueue == null) {
             throw new IllegalArgumentException("Triage queue cannot be null");
         }
@@ -63,8 +84,33 @@ public class UbsQueueManager {
         this.serviceQueues = serviceQueues;
     }
 
-    public Integer getNextTriageNumber() {
-        return triageQueue.getElementsQueue().size() + 1;
+    public String getNextTriageNumber() {
+        var delimiter = "-";
+        var lastNumberSplit = lastNumber.split(delimiter);
+        var number = Integer.parseInt(lastNumberSplit[1]);
+        var letterPrefix = lastNumberSplit[0].charAt(0);
+        var numberPrefix = Integer.parseInt(lastNumberSplit[0].substring(1));
+        var nextNumber = "";
+
+        switch (number) {
+            case 0 -> number = 1;
+            case 9999 -> {
+                letterPrefix++;
+                number = 1;
+                numberPrefix = letterPrefix == 'A' ? numberPrefix + 1 : numberPrefix;
+            }
+            default -> number++;
+        }
+
+        nextNumber = createQueueNumber(letterPrefix, numberPrefix, number);
+        triageQueue.getElementsQueue()
+                .add(nextNumber);
+        lastNumber = nextNumber;
+        return nextNumber;
+    }
+
+    private String createQueueNumber(Character letterPrefix, int numberPrefix, int number) {
+        return String.format("%c%d-%04d", letterPrefix, numberPrefix, number);
     }
 
     public void addPatientToQueue(EmergencyCategory emergencyCategory, Patient patient) {
@@ -73,6 +119,8 @@ public class UbsQueueManager {
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("No queue found for emergency category: " + emergencyCategory));
 
+        triageQueue.getElementsQueue()
+                .remove(patient.getQueueNumber());
         queue.getElementsQueue()
                 .add(patient);
     }

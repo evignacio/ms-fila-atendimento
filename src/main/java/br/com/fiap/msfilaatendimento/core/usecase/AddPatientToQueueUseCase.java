@@ -15,6 +15,7 @@ public record AddPatientToQueueUseCase(UbsQueueManagerGateway ubsQueueManagerGat
         log.info("Adding  patient to queue - ubsId: {},  emergency category: {}, patient name: {}", ubsId, emergencyCategory.name(), patient.getName());
         var ubsQueueManager = findUbsQueueManagerUseCase.execute(ubsId);
         ubsQueueManager.addPatientToQueue(emergencyCategory, patient);
+        ubsQueueManagerGateway.save(ubsQueueManager);
         log.info("Patient added to queue - ubsId: {}, emergency category: {},  patient name: {}", ubsId, emergencyCategory.name(), patient.getName());
     }
 }

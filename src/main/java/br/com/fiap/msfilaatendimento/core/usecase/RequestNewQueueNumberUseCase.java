@@ -6,13 +6,14 @@ import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-public record RequestNumberUseCase(UbsQueueManagerGateway ubsQueueManagerGateway,
-                                   FindUbsQueueManagerUseCase findUbsQueueManagerUseCase) {
+public record RequestNewQueueNumberUseCase(UbsQueueManagerGateway ubsQueueManagerGateway,
+                                           FindUbsQueueManagerUseCase findUbsQueueManagerUseCase) {
 
-    public Integer execute(String ubsId) {
+    public String execute(String ubsId) {
         log.info("Requesting number for patient - ubsId: {}", ubsId);
         var ubsQueueManager = findUbsQueueManagerUseCase.execute(ubsId);
-        Integer number = ubsQueueManager.getNextTriageNumber();
+        String number = ubsQueueManager.getNextTriageNumber();
+        ubsQueueManagerGateway.save(ubsQueueManager);
         log.info("Number patient requested - number : {}, ubsId {}", number, ubsId);
         return number;
     }

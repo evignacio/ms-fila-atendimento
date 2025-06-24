@@ -12,11 +12,11 @@ public abstract class UbsQueueManagerFactory {
     private UbsQueueManagerFactory() {
     }
 
-    public static UbsQueueManager create(String ubsId, String title) {
-        return new UbsQueueManager(ubsId, title, createTriageQueue(), createCategoryQueues());
+    public static UbsQueueManager create(String ubsId, String ubsName) {
+        return new UbsQueueManager(ubsId, ubsName, createTriageQueue(), createCategoryQueues());
     }
 
-    private static Queue<Integer> createTriageQueue() {
+    private static Queue<String> createTriageQueue() {
         return new Queue<>("Triage Queue", "Queue for triaging patients");
     }
 
