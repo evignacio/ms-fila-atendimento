@@ -12,7 +12,7 @@ public record RequestNewQueueNumberUseCase(UbsQueueManagerGateway ubsQueueManage
     public String execute(String ubsId) {
         log.info("Requesting number for patient - ubsId: {}", ubsId);
         var ubsQueueManager = findUbsQueueManagerUseCase.execute(ubsId);
-        String number = ubsQueueManager.getNextTriageNumber();
+        String number = ubsQueueManager.generateNextTriageNumber();
         ubsQueueManagerGateway.save(ubsQueueManager);
         log.info("Number patient requested - number : {}, ubsId {}", number, ubsId);
         return number;

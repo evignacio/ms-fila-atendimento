@@ -1,5 +1,6 @@
 package br.com.fiap.msfilaatendimento.core.entity;
 
+import java.util.Optional;
 import java.util.Set;
 
 public class UbsQueueManager {
@@ -20,7 +21,7 @@ public class UbsQueueManager {
     public UbsQueueManager(String ubsId, String ubsName, Queue<String> triageQueue, Set<Queue<Patient>> serviceQueues) {
         setUbsId(ubsId);
         setUbsName(ubsName);
-        setLastNumber(createQueueNumber('A', 0, 0));
+        setLastNumber(formatQueueNumber('A', 0, 0));
         setTriageQueue(triageQueue);
         setServiceQueues(serviceQueues);
     }
@@ -47,10 +48,6 @@ public class UbsQueueManager {
         this.ubsName = ubsName;
     }
 
-    public String getLastNumber() {
-        return lastNumber;
-    }
-
     private void setLastNumber(String lastNumber) {
         if (lastNumber == null || lastNumber.isEmpty()) {
             throw new IllegalArgumentException("Last number cannot be null or empty");
@@ -58,19 +55,11 @@ public class UbsQueueManager {
         this.lastNumber = lastNumber;
     }
 
-    public Queue<String> getTriageQueue() {
-        return triageQueue;
-    }
-
     private void setTriageQueue(Queue<String> triageQueue) {
         if (triageQueue == null) {
             throw new IllegalArgumentException("Triage queue cannot be null");
         }
         this.triageQueue = triageQueue;
-    }
-
-    public Set<Queue<Patient>> getServiceQueues() {
-        return serviceQueues;
     }
 
     private void setServiceQueues(Set<Queue<Patient>> serviceQueues) {
@@ -84,7 +73,7 @@ public class UbsQueueManager {
         this.serviceQueues = serviceQueues;
     }
 
-    public String getNextTriageNumber() {
+    public String generateNextTriageNumber() {
         var delimiter = "-";
         var lastNumberSplit = lastNumber.split(delimiter);
         var number = Integer.parseInt(lastNumberSplit[1]);
@@ -102,14 +91,13 @@ public class UbsQueueManager {
             default -> number++;
         }
 
-        nextNumber = createQueueNumber(letterPrefix, numberPrefix, number);
-        triageQueue.getElementsQueue()
-                .add(nextNumber);
+        nextNumber = formatQueueNumber(letterPrefix, numberPrefix, number);
+        triageQueue.addElement(nextNumber);
         lastNumber = nextNumber;
         return nextNumber;
     }
 
-    private String createQueueNumber(Character letterPrefix, int numberPrefix, int number) {
+    private String formatQueueNumber(Character letterPrefix, int numberPrefix, int number) {
         return String.format("%c%d-%04d", letterPrefix, numberPrefix, number);
     }
 
@@ -119,9 +107,41 @@ public class UbsQueueManager {
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("No queue found for emergency category: " + emergencyCategory));
 
-        triageQueue.getElementsQueue()
-                .remove(patient.getQueueNumber());
-        queue.getElementsQueue()
-                .add(patient);
+        triageQueue.removeElement(patient.getQueueNumber());
+        queue.addElement(patient);
+    }
+
+    public String getNextNumberFromTriageQueue() {
+        var nextPatientNumberOpt = triageQueue.getNextElement();
+
+        if (nextPatientNumberOpt.isEmpty()) {
+            throw new IllegalStateException("No patients in the triage queue");
+        }
+
+        return nextPatientNumberOpt.get();
+    }
+
+    public Patient getPatientFromServiceQueue() {
+        Optional<Patient> nextPatientOpt;
+
+        var emergencyQueue = getQueueByEmergencyCategory(EmergencyCategory.EMERGENCY);
+        nextPatientOpt = emergencyQueue.getNextElement();
+        if (nextPatientOpt.isPresent()) {
+            return nextPatientOpt.get();
+        }
+
+        var veryUrgent = getQueueByEmergencyCategory(EmergencyCategory.VERY_URGENT);
+        nextPatientOpt = veryUrgent.getNextElement();
+        if (nextPatientOpt.isPresent()) {
+            return nextPatientOpt.get();
+        }
+
+    }
+
+    private Queue<Patient> getQueueByEmergencyCategory(EmergencyCategory emergencyCategory) {
+        return serviceQueues.stream()
+                .filter(queue -> queue.getEmergencyCategory() == emergencyCategory)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("No queue found for emergency category: " + emergencyCategory));
     }
 }

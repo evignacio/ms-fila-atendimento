@@ -73,14 +73,28 @@ public class Queue<T> {
         this.emergencyCategory = emergencyCategory;
     }
 
-    public java.util.Queue<T> getElementsQueue() {
-        return elementsQueue;
-    }
-
     private void setElementsQueue(java.util.Queue<T> patients) {
         if (patients == null) {
             throw new IllegalArgumentException("Elements queue cannot be null");
         }
         this.elementsQueue = patients;
+    }
+
+    public Optional<T> getNextElement() {
+        return Optional.ofNullable(elementsQueue.poll());
+    }
+
+    public void addElement(T element) {
+        if (element == null) {
+            throw new IllegalArgumentException("Element cannot be null");
+        }
+        elementsQueue.add(element);
+    }
+
+    public void removeElement(T element) {
+        if (element == null) {
+            throw new IllegalArgumentException("Element cannot be null");
+        }
+        elementsQueue.remove(element);
     }
 }

@@ -12,14 +12,7 @@ public record CallNextPatientToTriageUseCase(UbsQueueManagerGateway ubsQueueMana
     public String execute(String ubsId) {
         log.info("Calling next patient to triage - ubsId: {}", ubsId);
         var ubsQueueManager = findUbsQueueManagerUseCase.execute(ubsId);
-        var nextPatientNumber = ubsQueueManager.getTriageQueue()
-                .getElementsQueue()
-                .poll();
-
-        if (nextPatientNumber == null) {
-            log.warn("No patients in the triage queue for UBS - ubsId: {}", ubsId);
-            throw new IllegalStateException("The ubs request, has no patient in the triage queue - ubsId: " + ubsId);
-        }
+        var nextPatientNumber = ubsQueueManager.getNextNumberFromTriageQueue();
         log.info("Next patient called to triage - ubsId: {}, nextPatientNumber: {}", ubsId, nextPatientNumber);
         return nextPatientNumber;
     }
