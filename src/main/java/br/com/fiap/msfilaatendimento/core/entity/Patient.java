@@ -1,5 +1,6 @@
 package br.com.fiap.msfilaatendimento.core.entity;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public class Patient {
@@ -50,5 +51,26 @@ public class Patient {
             throw new IllegalArgumentException("Queue number cannot be null or empty");
         }
         this.queueNumber = queueNumber;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Patient patient)) return false;
+        return Objects.equals(id, patient.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Patient{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", queueNumber='" + queueNumber + '\'' +
+                '}';
     }
 }

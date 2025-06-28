@@ -1,5 +1,6 @@
 package br.com.fiap.msfilaatendimento.core.usecase;
 
+import br.com.fiap.msfilaatendimento.core.entity.Patient;
 import br.com.fiap.msfilaatendimento.core.gateway.UbsQueueManagerGateway;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -9,11 +10,11 @@ import org.springframework.stereotype.Service;
 public record CallNextPatientToCareUseCase(UbsQueueManagerGateway ubsQueueManagerGateway,
                                            FindUbsQueueManagerUseCase findUbsQueueManagerUseCase) {
 
-    public String execute(String ubsId) {
+    public Patient execute(String ubsId) {
         log.info("Calling next patient to care - ubsId: {}", ubsId);
         var ubsQueueManager = findUbsQueueManagerUseCase.execute(ubsId);
-        var nextPatientNumber = ubsQueueManager.getNextNumberFromCareQueue();
-        log.info("Next patient called to care - ubsId: {}, nextPatientNumber: {}", ubsId, nextPatientNumber);
-        return nextPatientNumber;
+        var nextPatient = ubsQueueManager.getPatientFromServiceQueue();
+        log.info("Next patient called to care - ubsId: {}, nextPatient: {}", ubsId, nextPatient);
+        return nextPatient;
     }
 }

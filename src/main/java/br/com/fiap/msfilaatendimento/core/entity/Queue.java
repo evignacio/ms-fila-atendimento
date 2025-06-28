@@ -1,6 +1,7 @@
 package br.com.fiap.msfilaatendimento.core.entity;
 
 import java.util.ArrayDeque;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -69,6 +70,10 @@ public class Queue<T> {
         return emergencyCategory;
     }
 
+    public int getLevelPriority() {
+        return emergencyCategory != null ? emergencyCategory.getLevelPriority() : 0;
+    }
+
     private void setEmergencyCategory(EmergencyCategory emergencyCategory) {
         this.emergencyCategory = emergencyCategory;
     }
@@ -96,5 +101,28 @@ public class Queue<T> {
             throw new IllegalArgumentException("Element cannot be null");
         }
         elementsQueue.remove(element);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Queue<?> queue)) return false;
+        return Objects.equals(id, queue.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Queue{" +
+                "id='" + id + '\'' +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", emergencyCategory=" + emergencyCategory +
+                ", elementsQueue=" + elementsQueue +
+                '}';
     }
 }

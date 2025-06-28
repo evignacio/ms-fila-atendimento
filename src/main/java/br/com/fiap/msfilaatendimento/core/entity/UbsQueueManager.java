@@ -1,5 +1,7 @@
 package br.com.fiap.msfilaatendimento.core.entity;
 
+import java.util.Comparator;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -123,25 +125,37 @@ public class UbsQueueManager {
 
     public Patient getPatientFromServiceQueue() {
         Optional<Patient> nextPatientOpt;
+        Patient patient = null;
 
-        var emergencyQueue = getQueueByEmergencyCategory(EmergencyCategory.EMERGENCY);
-        nextPatientOpt = emergencyQueue.getNextElement();
-        if (nextPatientOpt.isPresent()) {
-            return nextPatientOpt.get();
+        var serviceQueuesSortedByEmergencyLevel = serviceQueues.stream()
+                .sorted((Comparator.comparing(Queue::getLevelPriority)))
+                .iterator();
+
+        while (serviceQueuesSortedByEmergencyLevel.hasNext()) {
+            var currentQueue = serviceQueuesSortedByEmergencyLevel.next();
+            nextPatientOpt = currentQueue.getNextElement();
+            if (nextPatientOpt.isPresent()) {
+                patient = nextPatientOpt.get();
+                break;
+            }
         }
 
-        var veryUrgent = getQueueByEmergencyCategory(EmergencyCategory.VERY_URGENT);
-        nextPatientOpt = veryUrgent.getNextElement();
-        if (nextPatientOpt.isPresent()) {
-            return nextPatientOpt.get();
+        if (patient == null) {
+            throw new IllegalStateException("No patients in the service queues");
         }
 
+        return patient;
     }
 
-    private Queue<Patient> getQueueByEmergencyCategory(EmergencyCategory emergencyCategory) {
-        return serviceQueues.stream()
-                .filter(queue -> queue.getEmergencyCategory() == emergencyCategory)
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("No queue found for emergency category: " + emergencyCategory));
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UbsQueueManager that)) return false;
+        return Objects.equals(ubsId, that.ubsId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(ubsId);
     }
 }
