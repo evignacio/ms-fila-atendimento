@@ -50,6 +50,9 @@ public class UbsQueueManager {
         this.ubsName = ubsName;
     }
 
+    public String getLastNumber() {
+        return lastNumber;
+    }
     private void setLastNumber(String lastNumber) {
         if (lastNumber == null || lastNumber.isEmpty()) {
             throw new IllegalArgumentException("Last number cannot be null or empty");

@@ -70,6 +70,10 @@ public class Queue<T> {
         return emergencyCategory;
     }
 
+    public java.util.Queue<T> getElementsQueue() {
+        return elementsQueue;
+    }
+
     public int getLevelPriority() {
         return emergencyCategory != null ? emergencyCategory.getLevelPriority() : 0;
     }
