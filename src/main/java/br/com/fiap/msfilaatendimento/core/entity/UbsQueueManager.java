@@ -53,6 +53,7 @@ public class UbsQueueManager {
     public String getLastNumber() {
         return lastNumber;
     }
+
     private void setLastNumber(String lastNumber) {
         if (lastNumber == null || lastNumber.isEmpty()) {
             throw new IllegalArgumentException("Last number cannot be null or empty");
@@ -60,11 +61,19 @@ public class UbsQueueManager {
         this.lastNumber = lastNumber;
     }
 
+    public Queue<String> getTriageQueue() {
+        return triageQueue;
+    }
+
     private void setTriageQueue(Queue<String> triageQueue) {
         if (triageQueue == null) {
             throw new IllegalArgumentException("Triage queue cannot be null");
         }
         this.triageQueue = triageQueue;
+    }
+
+    public Set<Queue<Patient>> getServiceQueues() {
+        return serviceQueues;
     }
 
     private void setServiceQueues(Set<Queue<Patient>> serviceQueues) {

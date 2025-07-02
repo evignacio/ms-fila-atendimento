@@ -70,16 +70,12 @@ public class Queue<T> {
         return emergencyCategory;
     }
 
-    public java.util.Queue<T> getElementsQueue() {
-        return elementsQueue;
-    }
-
-    public int getLevelPriority() {
-        return emergencyCategory != null ? emergencyCategory.getLevelPriority() : 0;
-    }
-
     private void setEmergencyCategory(EmergencyCategory emergencyCategory) {
         this.emergencyCategory = emergencyCategory;
+    }
+
+    public java.util.Queue<T> getElementsQueue() {
+        return elementsQueue;
     }
 
     private void setElementsQueue(java.util.Queue<T> patients) {
@@ -87,6 +83,10 @@ public class Queue<T> {
             throw new IllegalArgumentException("Elements queue cannot be null");
         }
         this.elementsQueue = patients;
+    }
+
+    public int getLevelPriority() {
+        return emergencyCategory != null ? emergencyCategory.getLevelPriority() : 0;
     }
 
     public Optional<T> getNextElement() {
@@ -105,6 +105,10 @@ public class Queue<T> {
             throw new IllegalArgumentException("Element cannot be null");
         }
         elementsQueue.remove(element);
+    }
+
+    public String getEmergencyCategoryName() {
+        return emergencyCategory != null ? emergencyCategory.name() : null;
     }
 
     @Override

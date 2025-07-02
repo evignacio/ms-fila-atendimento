@@ -19,22 +19,29 @@ public abstract class QueueMapper {
                 .map(elementMapper)
                 .collect(Collectors.toCollection(ArrayDeque::new));
 
+        var emergencyCategory = model.getEmergencyCategory() != null ? EmergencyCategory.valueOf(model.getEmergencyCategory()) : null;
+
         return new Queue<>(
                 model.getId(),
                 model.getTitle(),
                 model.getDescription(),
-                EmergencyCategory.valueOf(model.getEmergencyCategory()),
+                emergencyCategory,
                 elementsQueue
         );
     }
 
-    public static <T> QueueModel<T> toModel(Queue<T> entity) {
+    public static <S, T> QueueModel<T> toModel(Queue<S> entity, Function<S, T> elementMapper) {
+        java.util.Queue<T> elementsQueue = entity.getElementsQueue()
+                .stream()
+                .map(elementMapper)
+                .collect(Collectors.toCollection(ArrayDeque::new));
+
         return QueueModel.<T>builder()
                 .id(entity.getId())
                 .title(entity.getTitle())
                 .description(entity.getDescription())
-                .emergencyCategory(entity.getEmergencyCategory().name())
-                .elementsQueue(entity.getElementsQueue())
+                .emergencyCategory(entity.getEmergencyCategoryName())
+                .elementsQueue(elementsQueue)
                 .build();
     }
 }
