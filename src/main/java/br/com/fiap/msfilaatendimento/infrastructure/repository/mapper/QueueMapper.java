@@ -5,6 +5,8 @@ import br.com.fiap.msfilaatendimento.core.entity.Queue;
 import br.com.fiap.msfilaatendimento.infrastructure.repository.model.QueueModel;
 
 import java.util.ArrayDeque;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -31,10 +33,10 @@ public abstract class QueueMapper {
     }
 
     public static <S, T> QueueModel<T> toModel(Queue<S> entity, Function<S, T> elementMapper) {
-        java.util.Queue<T> elementsQueue = entity.getElementsQueue()
+        LinkedHashSet<T> elementsQueue = entity.getElementsQueue()
                 .stream()
                 .map(elementMapper)
-                .collect(Collectors.toCollection(ArrayDeque::new));
+                .collect(Collectors.toCollection(LinkedHashSet::new));
 
         return QueueModel.<T>builder()
                 .id(entity.getId())

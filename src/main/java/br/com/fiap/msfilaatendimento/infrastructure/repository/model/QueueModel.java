@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.LinkedHashSet;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -14,5 +16,5 @@ public class QueueModel<T> {
     private String title;
     private String description;
     private String emergencyCategory;
-    private java.util.Queue<T> elementsQueue;
+    private LinkedHashSet<T> elementsQueue;
 }

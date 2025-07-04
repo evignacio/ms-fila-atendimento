@@ -13,6 +13,7 @@ public record CallNextPatientToTriageUseCase(UbsQueueManagerGateway ubsQueueMana
         log.info("Calling next patient to triage - ubsId: {}", ubsId);
         var ubsQueueManager = findUbsQueueManagerUseCase.execute(ubsId);
         var nextPatientNumber = ubsQueueManager.getNextNumberFromTriageQueue();
+        ubsQueueManagerGateway.save(ubsQueueManager);
         log.info("Next patient called to triage - ubsId: {}, nextPatientNumber: {}", ubsId, nextPatientNumber);
         return nextPatientNumber;
     }
