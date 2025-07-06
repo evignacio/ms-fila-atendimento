@@ -43,7 +43,7 @@ public abstract class UbsQueueManagerMapper {
         return UbsQueueManagerModel.builder()
                 .ubsId(entity.getUbsId())
                 .ubsName(entity.getUbsName())
-                .lastNumber(entity.getLastNumber())
+                .lastNumber(entity.getLastGenerateNumber())
                 .triageQueue(triageQueueModel)
                 .serviceQueues(serviceQueuesModel)
                 .build();

@@ -8,14 +8,14 @@ import java.util.Set;
 public class UbsQueueManager {
     private String ubsId;
     private String ubsName;
-    private String lastNumber;
+    private String lastGenerateNumber;
     private Queue<String> triageQueue;
     private Set<Queue<Patient>> serviceQueues;
 
-    public UbsQueueManager(String ubsId, String ubsName, String lastNumber, Queue<String> triageQueue, Set<Queue<Patient>> serviceQueues) {
+    public UbsQueueManager(String ubsId, String ubsName, String lastGenerateNumber, Queue<String> triageQueue, Set<Queue<Patient>> serviceQueues) {
         setUbsId(ubsId);
         setUbsName(ubsName);
-        setLastNumber(lastNumber);
+        setLastGenerateNumber(lastGenerateNumber);
         setTriageQueue(triageQueue);
         setServiceQueues(serviceQueues);
     }
@@ -23,7 +23,7 @@ public class UbsQueueManager {
     public UbsQueueManager(String ubsId, String ubsName, Queue<String> triageQueue, Set<Queue<Patient>> serviceQueues) {
         setUbsId(ubsId);
         setUbsName(ubsName);
-        setLastNumber(formatQueueNumber('A', 0, 0));
+        setLastGenerateNumber(formatQueueNumber('A', 0, 0));
         setTriageQueue(triageQueue);
         setServiceQueues(serviceQueues);
     }
@@ -50,15 +50,15 @@ public class UbsQueueManager {
         this.ubsName = ubsName;
     }
 
-    public String getLastNumber() {
-        return lastNumber;
+    public String getLastGenerateNumber() {
+        return lastGenerateNumber;
     }
 
-    private void setLastNumber(String lastNumber) {
-        if (lastNumber == null || lastNumber.isEmpty()) {
+    private void setLastGenerateNumber(String lastGenerateNumber) {
+        if (lastGenerateNumber == null || lastGenerateNumber.isEmpty()) {
             throw new IllegalArgumentException("Last number cannot be null or empty");
         }
-        this.lastNumber = lastNumber;
+        this.lastGenerateNumber = lastGenerateNumber;
     }
 
     public Queue<String> getTriageQueue() {
@@ -89,7 +89,7 @@ public class UbsQueueManager {
 
     public String generateNextTriageNumber() {
         var delimiter = "-";
-        var lastNumberSplit = lastNumber.split(delimiter);
+        var lastNumberSplit = lastGenerateNumber.split(delimiter);
         var number = Integer.parseInt(lastNumberSplit[1]);
         var letterPrefix = lastNumberSplit[0].charAt(0);
         var numberPrefix = Integer.parseInt(lastNumberSplit[0].substring(1));
@@ -107,7 +107,7 @@ public class UbsQueueManager {
 
         nextNumber = formatQueueNumber(letterPrefix, numberPrefix, number);
         triageQueue.addElement(nextNumber);
-        lastNumber = nextNumber;
+        lastGenerateNumber = nextNumber;
         return nextNumber;
     }
 
