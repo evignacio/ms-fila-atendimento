@@ -13,11 +13,11 @@ import java.util.Set;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "ubsQueueManagers")
-public class UbsQueueManagerModel {
+@Document(collection = "upaQueueManagers")
+public class UpaQueueManagerModel {
     @Id
-    private String ubsId;
-    private String ubsName;
+    private String upaId;
+    private String upaName;
     private String lastNumber;
     private QueueModel<String> triageQueue;
     private Set<QueueModel<PatientModel>> serviceQueues;

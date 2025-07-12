@@ -3,17 +3,17 @@ package br.com.fiap.msfilaatendimento.core.factory;
 import br.com.fiap.msfilaatendimento.core.entity.EmergencyCategory;
 import br.com.fiap.msfilaatendimento.core.entity.Patient;
 import br.com.fiap.msfilaatendimento.core.entity.Queue;
-import br.com.fiap.msfilaatendimento.core.entity.UbsQueueManager;
+import br.com.fiap.msfilaatendimento.core.entity.UpaQueueManager;
 
 import java.util.Set;
 
-public abstract class UbsQueueManagerFactory {
+public abstract class UpaQueueManagerFactory {
 
-    private UbsQueueManagerFactory() {
+    private UpaQueueManagerFactory() {
     }
 
-    public static UbsQueueManager create(String ubsId, String ubsName) {
-        return new UbsQueueManager(ubsId, ubsName, createTriageQueue(), createCategoryQueues());
+    public static UpaQueueManager create(String upaId, String upaName) {
+        return new UpaQueueManager(upaId, upaName, createTriageQueue(), createCategoryQueues());
     }
 
     private static Queue<String> createTriageQueue() {

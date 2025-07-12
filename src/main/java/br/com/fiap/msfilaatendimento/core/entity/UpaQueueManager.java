@@ -1,53 +1,51 @@
 package br.com.fiap.msfilaatendimento.core.entity;
 
-import java.util.Comparator;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
-public class UbsQueueManager {
-    private String ubsId;
-    private String ubsName;
+public class UpaQueueManager {
+    private String upaId;
+    private String upaName;
     private String lastGenerateNumber;
     private Queue<String> triageQueue;
     private Set<Queue<Patient>> serviceQueues;
 
-    public UbsQueueManager(String ubsId, String ubsName, String lastGenerateNumber, Queue<String> triageQueue, Set<Queue<Patient>> serviceQueues) {
-        setUbsId(ubsId);
-        setUbsName(ubsName);
+    public UpaQueueManager(String upaId, String upaName, String lastGenerateNumber, Queue<String> triageQueue, Set<Queue<Patient>> serviceQueues) {
+        setUpaId(upaId);
+        setUpaName(upaName);
         setLastGenerateNumber(lastGenerateNumber);
         setTriageQueue(triageQueue);
         setServiceQueues(serviceQueues);
     }
 
-    public UbsQueueManager(String ubsId, String ubsName, Queue<String> triageQueue, Set<Queue<Patient>> serviceQueues) {
-        setUbsId(ubsId);
-        setUbsName(ubsName);
+    public UpaQueueManager(String upaId, String upaName, Queue<String> triageQueue, Set<Queue<Patient>> serviceQueues) {
+        setUpaId(upaId);
+        setUpaName(upaName);
         setLastGenerateNumber(formatQueueNumber('A', 0, 0));
         setTriageQueue(triageQueue);
         setServiceQueues(serviceQueues);
     }
 
-    public String getUbsId() {
-        return ubsId;
+    public String getUpaId() {
+        return upaId;
     }
 
-    private void setUbsId(String ubsId) {
-        if (ubsId == null || ubsId.isEmpty()) {
-            throw new IllegalArgumentException("UBS ID cannot be null or empty");
+    private void setUpaId(String upaId) {
+        if (upaId == null || upaId.isEmpty()) {
+            throw new IllegalArgumentException("UPA ID cannot be null or empty");
         }
-        this.ubsId = ubsId;
+        this.upaId = upaId;
     }
 
-    public String getUbsName() {
-        return ubsName;
+    public String getUpaName() {
+        return upaName;
     }
 
-    private void setUbsName(String ubsName) {
-        if (ubsName == null || ubsName.isEmpty()) {
+    private void setUpaName(String upaName) {
+        if (upaName == null || upaName.isEmpty()) {
             throw new IllegalArgumentException("Title cannot be null or empty");
         }
-        this.ubsName = ubsName;
+        this.upaName = upaName;
     }
 
     public String getLastGenerateNumber() {
@@ -159,15 +157,48 @@ public class UbsQueueManager {
         return patient;
     }
 
+
+    public QueuesDetails toQueuesDetails() {
+        var triageQueueDetail = triageQueue.toQueueDetail();
+        var serviceQueuesDetails = serviceQueues.stream()
+                .map(Queue::toQueueDetail)
+                .sorted(Comparator.comparing(q -> q.getEmergencyCategory().getLevelPriority()))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        Set<QueueDetail> queuesDetails = new LinkedHashSet<>();
+        queuesDetails.add(triageQueueDetail);
+        queuesDetails.addAll(serviceQueuesDetails);
+
+        int totalPatientsAtUnit = queuesDetails.stream()
+                .mapToInt(QueueDetail::getSize).
+                sum();
+
+        return new QueuesDetails(upaId, queuesDetails, totalPatientsAtUnit, getTotalPatientTreated());
+    }
+
+    private int getTotalPatientTreated() {
+        final int totalLetter = 26;
+        final int totalNumberPerLetter = 9999;
+
+        var delimiter = "-";
+        var lastNumberSplit = lastGenerateNumber.split(delimiter);
+        var number = Integer.parseInt(lastNumberSplit[1]);
+        var letterPrefix = lastNumberSplit[0].charAt(0);
+        var numberPrefix = Integer.parseInt(lastNumberSplit[0].substring(1));
+
+        int prefixCount = letterPrefix - 'A' ;
+        return (numberPrefix * totalLetter) + (prefixCount * totalNumberPerLetter) + number;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof UbsQueueManager that)) return false;
-        return Objects.equals(ubsId, that.ubsId);
+        if (!(o instanceof UpaQueueManager that)) return false;
+        return Objects.equals(upaId, that.upaId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(ubsId);
+        return Objects.hashCode(upaId);
     }
 }

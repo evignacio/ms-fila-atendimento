@@ -1,21 +1,21 @@
 package br.com.fiap.msfilaatendimento.core.usecase;
 
 import br.com.fiap.msfilaatendimento.core.entity.Patient;
-import br.com.fiap.msfilaatendimento.core.gateway.UbsQueueManagerGateway;
+import br.com.fiap.msfilaatendimento.core.gateway.UpaQueueManagerGateway;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-public record CallNextPatientToCareUseCase(UbsQueueManagerGateway ubsQueueManagerGateway,
-                                           FindUbsQueueManagerUseCase findUbsQueueManagerUseCase) {
+public record CallNextPatientToCareUseCase(UpaQueueManagerGateway upaQueueManagerGateway,
+                                           FindUpaQueueManagerUseCase findUpaQueueManagerUseCase) {
 
-    public Patient execute(String ubsId) {
-        log.info("Calling next patient to care - ubsId: {}", ubsId);
-        var ubsQueueManager = findUbsQueueManagerUseCase.execute(ubsId);
-        var nextPatient = ubsQueueManager.getPatientFromServiceQueue();
-        ubsQueueManagerGateway.save(ubsQueueManager);
-        log.info("Next patient called to care - ubsId: {}, nextPatient: {}", ubsId, nextPatient);
+    public Patient execute(String upaId) {
+        log.info("Calling next patient to care - upaId: {}", upaId);
+        var upaQueueManager = findUpaQueueManagerUseCase.execute(upaId);
+        var nextPatient = upaQueueManager.getPatientFromServiceQueue();
+        upaQueueManagerGateway.save(upaQueueManager);
+        log.info("Next patient called to care - upaId: {}, nextPatient: {}", upaId, nextPatient);
         return nextPatient;
     }
 }

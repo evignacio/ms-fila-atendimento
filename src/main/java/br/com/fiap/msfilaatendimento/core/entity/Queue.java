@@ -111,6 +111,10 @@ public class Queue<T> {
         return emergencyCategory != null ? emergencyCategory.name() : null;
     }
 
+    public QueueDetail toQueueDetail() {
+        return new QueueDetail(title, elementsQueue.size(), emergencyCategory);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
