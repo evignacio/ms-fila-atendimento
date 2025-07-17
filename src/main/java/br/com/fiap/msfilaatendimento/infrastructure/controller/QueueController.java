@@ -18,31 +18,31 @@ public record QueueController(RequestNewQueueNumberUseCase requestNewQueueNumber
                               AddPatientToQueueUseCase addPatientToQueueUseCase,
                               GetQueuesDetailsUseCase getQueuesDetailsUseCase) {
 
-    @GetMapping("/upa/{upaId}")
+    @GetMapping("/upas/{upaId}")
     public ResponseEntity<QueuesDetails> getQueuesDetails(@PathVariable String upaId) {
         var queuesDetails = getQueuesDetailsUseCase.execute(upaId);
         return new ResponseEntity<>(queuesDetails, HttpStatus.OK);
     }
 
-    @PostMapping("/upa/{upaId}/new-number")
+    @PostMapping("/upas/{upaId}/new-number")
     ResponseEntity<PatientNumberResponse> requestNewNumber(@PathVariable String upaId) {
         var number = requestNewQueueNumberUseCase.execute(upaId);
         return new ResponseEntity<>(new PatientNumberResponse(number), HttpStatus.CREATED);
     }
 
-    @PostMapping("/triage/upa/{upaId}/call-next")
+    @PostMapping("/triage/upas/{upaId}/call-next")
     ResponseEntity<PatientNumberResponse> callNextTriage(@PathVariable String upaId) {
         var number = callNextPatientToTriageUseCase.execute(upaId);
         return new ResponseEntity<>(new PatientNumberResponse(number), HttpStatus.OK);
     }
 
-    @PostMapping("/service/upa/{upaId}/call-next")
+    @PostMapping("/service/upas/{upaId}/call-next")
     ResponseEntity<Patient> callNextService(@PathVariable String upaId) {
         var patient = callNextPatientToCareUseCase.execute(upaId);
         return new ResponseEntity<>(patient, HttpStatus.OK);
     }
 
-    @PostMapping("/upa/{upaId}/add-patient")
+    @PostMapping("/upas/{upaId}/add-patient")
     ResponseEntity<Void> addPatientToQueue(@PathVariable String upaId, @RequestBody AddPatientToQueueRequest request) {
         addPatientToQueueUseCase.execute(upaId, request.emergencyCategory(), PatientMapper.toEntity(request.patient()));
         return new ResponseEntity<>(HttpStatus.OK);

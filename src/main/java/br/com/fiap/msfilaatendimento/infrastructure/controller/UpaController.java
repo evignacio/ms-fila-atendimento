@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/upa")
+@RequestMapping("/upas")
 public record UpaController(GenerateQueuesUpaUseCase generateQueuesUpaUseCase) {
 
     @PostMapping("/{upaId}/generate-queues")
