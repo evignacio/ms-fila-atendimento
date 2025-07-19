@@ -159,6 +159,10 @@ public class UpaQueueManager {
 
 
     public QueuesDetails toQueuesDetails() {
+        return new QueuesDetails(upaId, getQueuesDetails(), getTotalPatientsAtUnit(), getTotalPatientTreated());
+    }
+
+    private Set<QueueDetail> getQueuesDetails() {
         var triageQueueDetail = triageQueue.toQueueDetail();
         var serviceQueuesDetails = serviceQueues.stream()
                 .map(Queue::toQueueDetail)
@@ -169,11 +173,13 @@ public class UpaQueueManager {
         queuesDetails.add(triageQueueDetail);
         queuesDetails.addAll(serviceQueuesDetails);
 
-        int totalPatientsAtUnit = queuesDetails.stream()
+        return queuesDetails;
+    }
+
+    private int getTotalPatientsAtUnit() {
+        return getQueuesDetails().stream()
                 .mapToInt(QueueDetail::getSize).
                 sum();
-
-        return new QueuesDetails(upaId, queuesDetails, totalPatientsAtUnit, getTotalPatientTreated());
     }
 
     private int getTotalPatientTreated() {
@@ -186,8 +192,8 @@ public class UpaQueueManager {
         var letterPrefix = lastNumberSplit[0].charAt(0);
         var numberPrefix = Integer.parseInt(lastNumberSplit[0].substring(1));
 
-        int prefixCount = letterPrefix - 'A' ;
-        return (numberPrefix * totalLetter) + (prefixCount * totalNumberPerLetter) + number;
+        int prefixCount = letterPrefix - 'A';
+        return ((numberPrefix * totalLetter) + (prefixCount * totalNumberPerLetter) + number) - getTotalPatientsAtUnit();
     }
 
     @Override

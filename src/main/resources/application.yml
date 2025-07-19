@@ -4,4 +4,4 @@ spring:
       uri: mongodb://localhost:27017/fila-atendimento-db
 rest-service:
   ms-gestao-upa:
-    url: http://localhost:8081
+    url: http://localhost:8082
